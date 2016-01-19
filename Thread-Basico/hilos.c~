@@ -1,0 +1,102 @@
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#define n_coches 8
+
+pthread_t tabla_hilos[n_coches];
+int suma=0;
+int cont=0;
+
+pthread_mutex_t mutex;
+pthread_mutex_t mutex1;
+
+
+typedef struct {
+int id;
+char *cadena;
+}hilos_param;
+
+typedef struct{
+
+int id;
+char *cadena;
+}orden;
+
+orden posiciones [n_coches];
+hilos_param parametros [n_coches];
+
+void *funcion_coches(hilos_param *p){
+int aleatorio;
+printf(" Salida %s %d \n", p->cadena,p->id);
+fflush (stdout);
+aleatorio=rand();
+pthread_mutex_lock(&mutex);
+suma=suma+aleatorio;
+pthread_mutex_unlock(&mutex);
+sleep(1 + (aleatorio%4));
+printf("Llegada %s %d \n",p->cadena,p->id);
+pthread_mutex_lock(&mutex1);
+posiciones[cont].id=p->id;
+posiciones[cont].cadena="coches";
+cont=cont+1;
+pthread_mutex_unlock(&mutex1);
+
+pthread_exit(&suma);
+
+
+}
+
+
+
+
+int main (){
+
+int i, *res;
+
+printf("Inicio proceso de creacion de los hilos ....\n");
+
+
+for(i=0;i<n_coches;i++){
+parametros[i].id=i;
+parametros[i].cadena="coche";
+
+if(pthread_create(&tabla_hilos[i],NULL,(void *)&funcion_coches,(void *)&parametros[i])==0){
+printf("Hilo creado correctamente hilo %d \n",i);
+
+
+
+}else{
+
+printf("Error en crear el hilo \n");
+
+
+}
+
+
+}
+
+
+
+printf("Proceso de creacion de hilos terminado\n");
+printf("Salida de coches\n");
+pthread_mutex_init(&mutex,NULL);
+pthread_mutex_init(&mutex1,NULL);
+
+for(i=0;i<n_coches;i++){
+
+pthread_join(tabla_hilos[i],(void **)(&res));
+
+
+}
+
+pthread_mutex_destroy(&mutex);
+pthread_mutex_destroy(&mutex1);
+
+printf("Todos los coches han LLegado a la Meta, el valor aleatorio: %d \n",*res);
+
+printf("Todos los coches han LLegado a la Meta, el valor aleatorio: %d \n",suma);
+
+return 0;
+}

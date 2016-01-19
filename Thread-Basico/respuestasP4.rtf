@@ -1,0 +1,5 @@
+﻿Respuesta [4]: la funcion rand genera un numero aleatorio que luego es ultizado en la funcion sleep esto lo que hace es que genera un tiempo aleatorio de espera entre hilo y hilo
+
+Respuesta [5]: si el hilo principal no espera a los demas lo que ocurriria es que los demas hilos no pudieran ejecutarse no les daria tiempo.
+
+Respuesta [6]: lo que puede suceder es que se generen condiciones de carreras ya que loshilos van a tratar d emodificar a una misma variable al mismo tiempo, entonces para evitar esto tenemos que implementar un semaforo que en este caso se haria con pthread_mutex_lock() que bloqueariaa los demas hilosde entrar hasta que este hilo ejecute la seccion critica de codigo y luego lo liberamos con phtread_mutex_unlock(), y en el main iniciar el semaforo con pthread_mutex_init().

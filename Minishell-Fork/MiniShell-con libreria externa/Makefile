@@ -1,0 +1,21 @@
+all = minishell.o ejecutar.o entrada_minishell.o libmemoria.o libshell.a ejecutar.h entrada_minishell.h libmemoria.h parser.h internas.h
+
+minishell: $(all)
+	gcc minishell.o ejecutar.o entrada_minishell.o libmemoria.o -o minishell -L./ -lshell -Wall
+
+minishell.o: minishell.c
+	gcc minishell.c -c -Wall
+
+ejecutar.o: ejecutar.c
+	gcc ejecutar.c -c -Wall
+
+entrada_minishell.o: entrada_minishell.c
+	gcc entrada_minishell.c -c -Wall
+
+libmemoria.o: libmemoria.c
+	gcc libmemoria.c -c -Wall
+
+#Eliminar los archivos no esenciales
+clean: 
+	rm *.o
+	rm minishell

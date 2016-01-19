@@ -1,0 +1,6 @@
+Practica 3
+Nombre: Luis Angel Parada
+Profesor: Julia Maria Clemente Parra
+Ejercicio 1 bloque 1 y bloque 2
+Ejercicio 2 bloque 1,2,3,4,5 bloque 3 y 4 se encuentran en ejecutar.c
+

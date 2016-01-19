@@ -1,0 +1,10 @@
+all: hilos.o
+
+hilos.o: hilos.o
+		gcc hilos.c -o hilos -lpthread -Wall
+
+
+
+clean:
+rm *o
+rm hilos
