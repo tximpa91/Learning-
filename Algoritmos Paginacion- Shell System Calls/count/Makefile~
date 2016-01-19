@@ -1,0 +1,21 @@
+all:count
+
+count: main.o libcount.a
+	gcc -g -Wall -o count main.o -L . -l count
+
+libcount.a: readchar_R.o readchar_R.h count_M.o count_M.h
+	ar -r libcount.a readchar_R.o count_M.o
+
+main.o: main.c readchar_R.h  count_M.h
+	gcc -g -Wall -c  main.c -o main.o
+
+readchar_R.o: readchar_R.c readchar_R.h
+	gcc -g -Wall -c -o readchar_R.o readchar_R.c
+count_M.o: count_M.h count_M.c
+	gcc -g -Wall -c -o count_M.o count_M.c
+
+
+
+clean:
+	rm -f *.o *.a
+

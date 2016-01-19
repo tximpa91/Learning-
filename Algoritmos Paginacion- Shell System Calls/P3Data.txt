@@ -1,0 +1,6 @@
+Name: Luis Angel Parada Rodriguez 
+DNI: 50502347M
+Delivering:
+Count: count_M readchar_R
+Microshell: all the commands requested and plus myclear.
+	    
