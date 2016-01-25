@@ -1,0 +1,28 @@
+PROGRAM
+ VARDECl
+    id,id2,id3,id6,id8,
+    id9  -> INTeger;
+    id4,id5,id6                       
+    -> BOOLean;
+    cont, asd   -> integer;
+END;
+
+function $nombre1 a1 (boolean), b1 (integer), b2(integer) 
+   id3 = 4 + b1;
+return id3;
+
+
+
+function $nombre3
+return true;
+
+Begin 
+
+id = (1 + 1)  + $nombre1(true,1,1);
+id4 = true;
+id6 = id4;
+
+id2 = id + id3;
+
+
+end;

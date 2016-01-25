@@ -1,0 +1,13 @@
+PROGRAM
+ VARDECl
+    id,id2,id3,id6,id8,
+    id9  -> INTeger;
+    id4,id5,id6                       
+    -> BOOLean;
+    cont, asd   -> integer;
+END;
+
+Begin 
+
+
+end;

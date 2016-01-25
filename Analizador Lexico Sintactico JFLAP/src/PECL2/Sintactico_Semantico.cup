@@ -1,0 +1,602 @@
+
+package PECL2;
+
+
+import java.io.*;
+import java.util.*;
+import java_cup.runtime.*;
+parser code
+
+
+{:
+
+
+
+
+  public void report_error(String message, Object info,int errors, int semantic,int a) {
+  	System.out.println("");
+
+  }
+
+	
+	 public void syntax_error (Symbol s)
+	{	
+	
+		System.out.println ("Error sintactico en la linea " + s.left + " " + s.right + ", token " + s.value + " incorrecto.");
+	}
+	
+	public void unrecovered_syntax_error(Symbol s) {
+		System.out.println("");
+	}
+
+  public void report_fatal_error(String message, Object info) {
+    report_error(message, info);
+    }
+    
+    	
+	
+    
+    
+  
+  
+	
+
+
+public static void main (String argv[]) throws Exception
+
+{
+ 			
+    
+		
+			File fis=new File(argv[8]); 
+        	String nombre= fis.getName();
+ 			int tamaño = nombre.length();
+ 			
+        	if (nombre.startsWith(".prog", tamaño-5))
+        	{
+        	FileInputStream realFile =new FileInputStream(fis.getAbsolutePath());   
+        		
+				System.out.println();
+				System.out.println( "Comenzando el análisis de su archivo: "+ nombre);
+				System.out.println();
+				
+				
+				 
+				
+				Sintactico_SemanticoCup probando =  new Sintactico_SemanticoCup (new Yylex(realFile)); 
+				probando.parse();
+				}
+			else
+			{
+			System.out.println();
+			System.out.println( "Comenzando el análisis de su archivo: "+ nombre);
+		
+			System.out.println( "Su Archivo:  " +nombre+ " no es compatible");
+			
+				}		
+			
+		
+}
+
+	
+
+
+:}
+
+action code
+{:
+
+	public Hashtable<String,Item> contenedor =new Hashtable<String,Item>();
+	public ArrayList<Item> Tokens = new ArrayList<Item>();
+	public String type;
+	public String returno;
+	public int param=0;
+	public int aux =0;
+	public static int errors;
+	public static int warnings;
+	public static int semantic;
+
+	
+
+	public void  tokenID ()
+	{
+		Set set = contenedor.entrySet();
+    	Iterator it = set.iterator();
+    	while (it.hasNext()) 
+    	{
+      		Map.Entry entry = (Map.Entry) it.next();
+      		if(((Item) entry.getValue()).getNumero()==0 && ((Item) entry.getValue()).getValue().equalsIgnoreCase("funcion") )
+      		System.out.println(entry.getKey() + " : " + ((Item) entry.getValue()).getTipo());
+    	}
+	}
+	
+	public String check2 ( String token)
+	{
+		String j = "ERROR";
+	
+		if(token != null)
+		{	if(contenedor.get(token)!=null)	
+			{
+				Item i = contenedor.get(token);
+				j =i.getTipo();
+			}
+			else
+			{
+	  			j =  "No declarado";
+			}
+		}
+	
+	
+		
+		
+ 		return j;
+	}
+	
+	
+
+	public  String check(String token)
+	{
+		if (token !=null){
+		Item  i = contenedor.get(token);
+			if(i==null)
+			{	
+				if(token.equalsIgnoreCase("False") || token.equalsIgnoreCase("True"))
+			
+				{
+					return "BOOLEAN";
+				}
+				else
+				{
+					
+					return "INTEGER";
+				}
+				
+				}
+			
+			else
+			{
+				return i.getTipo();
+			}
+		 
+		}
+		
+		return "ERROR";
+	}
+	
+	
+		
+	public  int checkfunc(String token)
+	{
+		Item i = contenedor.get(token);
+		
+		if(i==null)
+		{	
+			return 0;
+		}
+		else
+		{  
+			return i.getParametros().size();
+		}
+	}
+	
+
+	public int param (String argumento)
+	{
+		String[] result = argumento.split(",");
+	
+	 	return  result.length;
+	
+	
+	
+	}
+	public String parametros2 (String argumento,String funcid)
+	{	
+		int cont=0;
+		
+		String condicion="No Declarado";
+		if( contenedor.get(funcid)!=null){
+		    contenedor.get(funcid).setNumero(1);
+		    ArrayList<Item> lista = contenedor.get(funcid).getParametros();
+		    
+		    if (lista.size()!=0){
+			int i = lista.size()-1;
+			String[] result = argumento.split(",");
+			for (int x=0; x<result.length; x++)
+			{	
+				if(result[x].equalsIgnoreCase("true")||result[x].equalsIgnoreCase("false"))
+				{	result[x]="boolean"; }
+				else
+				{
+					if(result[x].matches("\\d"))
+					{
+     				result[x]="integer";
+					}
+     		
+				}
+     			
+     				if (lista.get(i).getTipo().equalsIgnoreCase(result[x].toString()))
+     				{
+     				
+     				cont=cont+1;
+     				}
+     			
+     				i=i-1;
+     			
+     		
+     	
+			}
+         
+			if (cont == lista.size())
+				{condicion="true";}
+			else
+				{condicion = "false";}
+			return condicion;
+	  }
+		else{
+			condicion = "Sin parametros";
+			return condicion;
+			
+		}
+		}
+		else{
+			return condicion;
+		}
+		
+	}
+	
+	
+	
+	public void reporte()
+	{
+		
+		System.out.println("--------------------------------------------------------------------------");
+	 	System.out.println("Numero de errores sintacticos: " + errors);
+	 	System.out.println("Numero de errores semanticos: " + semantic);
+	 	System.out.println("Numero de errores lexicos: " + Yylex.lexico);
+	 	Set set = contenedor.entrySet();
+    	Iterator it = set.iterator();
+    	while (it.hasNext()) 
+    	{
+      		Map.Entry entry = (Map.Entry) it.next();
+      		if(((Item) entry.getValue()).getNumero()==0 && ((Item) entry.getValue()).getValue().equalsIgnoreCase("funcion") )
+      		System.out.println("Warning: la funcion "+ entry.getKey() + " ha sido declarada y no usada" );
+    	}
+	 	
+	 }
+
+
+
+
+:}
+
+terminal	String	 TK_BEGIN,TK_FUNCTION;
+terminal	String	 TK_END,TK_VARCDEL,TK_INTEGER;
+terminal 	String	 TK_TRUE,TK_RETURN,TK_FALSE,TK_PROGRAM;
+terminal	String   TK_RESTA, TK_IGUAL, TK_ASIGNACION;
+terminal	String	 TK_OPENPARENT,TK_CLOSEPARENT, TK_COMA,TK_SEMI,TK_SUMA;
+terminal 	String   TK_ID,TK_FUNCID,TK_BOOL;
+terminal 	Integer  TK_NUMERO;
+
+non terminal String    axioma,programa,bloque,expresion,argumento,opcion,valuetype,operaciones;
+non terminal String	decls,decl,decfunc,func,body,returntype,tipo,decvar,asignacion,sentencia,formato,formato2,bloqueclose;
+precedence left  TK_RESTA,error,TK_FUNCTION;
+
+
+
+axioma::= TK_PROGRAM   decvar decfunc programa  {: reporte();:} 
+		  | error decvar decfunc  programa {: errors++; reporte(); :};
+
+programa::= TK_BEGIN  bloque bloqueclose 
+			|
+			| error {:  errors++;:}; 
+			
+
+bloque::=  /*epsilon*/
+		| expresion bloque ;
+bloqueclose::= TK_END TK_SEMI
+			   |error TK_SEMI{:  errors++; reporte();:}
+			   |error {:  errors++; reporte();:}
+			  ;
+
+sentencia ::=  formato:e TK_SEMI 
+				{:  	
+						RESULT=e; :} ;
+						
+
+expresion::= TK_ID:E1 TK_IGUAL sentencia:E2
+			{: 
+			
+				String token = check2(E1);
+				
+				String token2= check(E2);
+				
+				if(token.equalsIgnoreCase(token2) ) 		
+				{
+		   			RESULT=token;
+		   	 	}
+		  		else
+		   		{
+		   	 		if(token.equalsIgnoreCase("No declarado"))
+		   	 		{
+		   	 			System.out.println(" Variable no declarada: " +"'"+E1+"'"+ " en la linea " + E1left + " en la columna " +E1right );	
+		   	 			semantic=semantic + 1; 
+		   	 			System.out.println("");
+		   	 		}
+		   	 		else
+		   	 		{
+		   				System.out.println(" Asignacion de tipos invalidos  " + "'"+E1+"' tipo  " + token.toUpperCase() + " y "+ "'"+E2+"' tipo  "+ token2.toUpperCase()+ " en la linea : " + E1left + " en la columna " +E1right );
+		   				semantic=semantic + 1; 
+		   				System.out.println("");
+		   			}
+		  	    }
+		             
+		              
+				
+			
+			
+			:}
+			 |error {:  errors++;:}
+			 ; 
+
+
+formato::=  opcion:E 
+
+			{: 
+				RESULT=E;
+			:}
+		| TK_OPENPARENT formato:E TK_CLOSEPARENT formato2:E3
+		  {:  	
+		  	if (E3!= null){
+		   	String token= check (E3);
+		   	
+		   	if (!token.equalsIgnoreCase(E))
+		   	{
+		   		
+		   		System.out.println(" Error en suma de tipos  "+  "'"+E+"'"+ "con "+ "'"+token+"'"  +" en la linea " + Eleft + " en la columna " + Eright);
+		   		System.out.println("");
+		   		semantic++;
+		   		RESULT="ERROR";
+		   		
+		   	}
+		   	}
+		  
+		  	RESULT=E;
+		  
+		  :}
+		| opcion:E  operaciones   opcion:E1 formato2:E3
+		{:
+			
+			String token1=check(E);
+		   	String token2=check(E1);
+		    
+		   	if(token1.equalsIgnoreCase(token2))
+		   	{
+		   	
+		   	 	if(token1.equalsIgnoreCase("boolean"))
+		   	 	{
+		   	 	System.out.println(" Error en suma de tipos  "+  "'"+E+"'"+ " " + token1.toUpperCase() + " " +  "'"+E1+"'" + " " + token2.toUpperCase() + " en la linea " + Eleft + " en la columna " + Eright);
+		   	 	semantic=semantic + 1; 
+	
+		   	 	RESULT="ERROR";		
+		   	 	}
+		   	 	else
+		   	 	{
+		   	 	RESULT=check(E);
+		   	 	}
+		   	 
+		   	 
+		   
+		  	 }
+		  	 else
+		   	{
+		    	System.out.println(" Error en suma de tipos  "+  "'"+E+"'"+ " " + token1.toUpperCase() + " " +  "'"+E1+"'" + " " + token2.toUpperCase() + " en la linea " + Eleft + " en la columna " + Eright);
+		   		semantic=semantic + 1; 
+		   		System.out.println("");
+		   		RESULT="ERROR"	;
+		   	}
+		             
+		:}
+		;
+		
+formato2::=   operaciones  formato:E
+			  {:RESULT= E;:}
+			|
+			;
+operaciones::= TK_SUMA
+			   |TK_RESTA;		
+		 
+opcion::= TK_ID:E {: RESULT = E;:} 
+		| TK_NUMERO:E {: RESULT = E.toString();:} 
+		| TK_FUNCID:E  argumento:E2   
+		{:
+			
+			if((parametros2(E2,E).equalsIgnoreCase("No declarado")))
+			{
+				System.out.println("La funcion: " + E+ " en la columna "  + Eleft + " linea " + Eright + " No esta declarada");
+				semantic=semantic + 1; 
+				System.out.println("");
+			}
+			else
+			{
+				
+				if(!(checkfunc(E)==param(E2)))
+				{
+			 		System.out.println("Error en la llamada de la funcion: " + E+ " en la columna "  + Eleft + " linea " + Eright + " la cantidad de parametros son incorrectos" );
+			 		errors=errors + 1;
+			 		System.out.println("");
+				}	
+				else
+				{
+					if((parametros2(E2,E).equalsIgnoreCase("false")))
+				{
+					System.out.println("La funcion: " + E+ " en la columna "  + Eleft + " linea " + Eright + " los tipos de parametros son incorrectos ");
+					semantic=semantic + 1; 
+					System.out.println("");
+					
+					
+				}
+			}
+			}
+			
+			
+			
+			
+			
+			
+				
+			RESULT = E;
+		:}
+		|TK_FALSE:E {: RESULT= E; :} 
+		|TK_TRUE:E {: RESULT= E; :} 
+		
+	;
+
+
+argumento ::=   TK_OPENPARENT:E valuetype:E1 TK_CLOSEPARENT:E2
+				{:
+					
+					RESULT=E1+","; 
+					:} 
+				|TK_OPENPARENT valuetype:E1 TK_COMA  argumento:e2
+				 {:    
+				 	   RESULT=E1+","+e2;      :}
+				|valuetype:E1 TK_CLOSEPARENT 
+				{: 
+				   RESULT=E1+","; :}
+				|valuetype:E1 TK_COMA argumento:e2
+				{: 
+				   RESULT=E1+","+e2; :}
+				| {: RESULT= ",";:}
+				
+				|TK_OPENPARENT:E TK_FUNCID argumento   TK_CLOSEPARENT:E2
+				;
+				
+				
+				   
+
+
+decvar::= | 
+		  TK_VARCDEL decls TK_END TK_SEMI
+		  |error decls TK_END TK_SEMI {:  errors++;:}
+		;
+
+decls::= | decl:E1 decls 
+		 {:   RESULT=E1;     :};
+		   
+
+decl::= 	asignacion TK_SEMI 
+			| error {:errors++;:} ;
+
+asignacion::= 
+		  TK_ID:E1 TK_ASIGNACION tipo:e
+		  {:	Item i= new Item(E1,"",e);
+				contenedor.put(E1,i);
+				type=e;
+				RESULT = e ;		
+					:}  
+		| TK_ID:E1 TK_COMA asignacion
+		{:  
+				Item i = new Item(E1,"",type);
+				contenedor.put(E1,i);
+		:}
+		
+
+		;
+
+tipo::= TK_INTEGER:E {: RESULT = E;:} 
+	  | TK_BOOL:E {: RESULT = E;:} ;
+
+
+decfunc::=  | TK_FUNCTION TK_FUNCID:E1 func 
+			{:               
+				Item i = new Item(E1,"funcion",check(returno),((ArrayList<Item>)Tokens.clone())); 
+				contenedor.put(E1,i);
+			 	Tokens.removeAll(Tokens);    
+			 	     :}
+			 
+			 |error decfunc{:errors++;
+			 :};
+			
+
+
+
+func ::=  TK_ID:E2 TK_OPENPARENT tipo:E3 TK_CLOSEPARENT body 
+			
+			{:    Item i = new Item (E2,"",E3);
+				  contenedor.put(E2,i);
+				  
+		   		  Tokens.add(i);
+				                    :}
+		   |TK_ID:E2 TK_OPENPARENT tipo:E3 TK_CLOSEPARENT TK_COMA func 
+		   {: 
+		   		Item i = new Item(E2,"",E3);
+		   		contenedor.put(E2,i);
+		   		Tokens.add(i); 
+		   		     :}
+		   
+		   |body
+	
+		;
+body ::= expresion TK_RETURN returntype:E3  TK_SEMI decfunc 
+		 {:   returno=E3;
+		 :} 
+		|TK_RETURN returntype:E3  TK_SEMI decfunc
+		{:   returno=E3;
+		 :} 
+		|error decfunc {:  errors++;:} ;
+
+
+valuetype::=  TK_TRUE:E
+				{: RESULT= E; :}
+			| TK_FALSE:E
+				{: RESULT= E; :}  
+			| TK_NUMERO:E
+				{: RESULT= E.toString(); :}
+			;
+returntype::= TK_TRUE:E
+				{: RESULT = E; :}
+			| TK_FALSE:E
+				{: RESULT= E;   :}  
+			| TK_NUMERO:E
+				{: RESULT= E.toString(); :}
+			| TK_ID:E
+				{: RESULT= E; :} 
+		
+				;
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+		
+		 
+		 	
+		 
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+

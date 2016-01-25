@@ -1,0 +1,15 @@
+//src/PECL2/Lexico.lex/lex-code-method=0
+//src/PECL2/Lexico.lex/lex-comply-jlex=true
+//src/PECL2/Lexico.lex/lex-output=src
+//src/PECL2/Lexico.lex/lex-skip-min=true
+//src/PECL2/Sintactico_Semantico.cup/cup-compact-red=false
+//src/PECL2/Sintactico_Semantico.cup/cup-debug=true
+//src/PECL2/Sintactico_Semantico.cup/cup-expected-conflicts=0
+//src/PECL2/Sintactico_Semantico.cup/cup-no-positions=false
+//src/PECL2/Sintactico_Semantico.cup/cup-no-scanner=false
+//src/PECL2/Sintactico_Semantico.cup/cup-non-terms=false
+//src/PECL2/Sintactico_Semantico.cup/cup-output=src
+//src/PECL2/Sintactico_Semantico.cup/cup-parser-class=Sintactico_SemanticoCup
+//src/PECL2/Sintactico_Semantico.cup/cup-symbols-class=sym
+//src/PECL2/Sintactico_Semantico.cup/cup-symbols-if=true
+eclipse.preferences.version=1
