@@ -1,0 +1,2 @@
+serviceClass: fixPc__.client.GreetingService
+path: 239AD9932457FF36DB7025CEBB2B2425.gwt.rpc
