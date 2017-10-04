@@ -1,1 +1,3 @@
-# Learning- new thing
+# Learning
+Desarrollos personales hechos en las carrera universitaria
+
